@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!--    <script src="plotly-latest.min.js"></script>-->
+    <style type="text/css">
+        .header{
+            text-align: center;
+            background-color: rgb(136, 185, 229);
+            height: 70px;
+            line-height: 70px;
+        }
+        .chart{
+            margin-top: 30px;
+            text-align: center;
+
+            width:1000px;
+        }
+    </style>
+</head>
+
+<body>
+<!--<div class="container">-->
+<!--  <h3>Tabs</h3>-->
+<!--  <ul class="nav nav-tabs">-->
+<!--    <li class="active"><a href="#chart">Chart 1</a></li>-->
+<!--    <li><a href="#">Chart 2</a></li>-->
+<!--    <li><a href="#">Chart 3</a></li>-->
+<!--    <li><a href="#">Chart 4</a></li>-->
+<!--  </ul>-->
+<!--  <br>-->
+<!--</div>-->
+
+    <div class="header">
+        <h2>
+            Plotly Chart Demo
+        </h2>
+    </div>
+
+    <div id="chart" class="chart">
+    </div>
+    <div id="chart_1" class="chart_1">
+    </div>
+    <div id="chart_2" class="chart_2">
+    </div>
+
+</body>
+
+    <!-- D3.js -->
+
+    <!-- Plotly.js -->
+    <
+
+
+    <script type="text/javascript">
+
+        var graphs = {{graphJSON[0] | safe}};
+
+        Plotly.plot('chart',graphs,{});
+
+        var graphs_1 = {{graphJSON[1] | safe}};
+
+        Plotly.plot('chart_2',graphs_1,{});
+
+        var graphs_2 = {{graphJSON[2] | safe}};
+
+        Plotly.plot('chart_1',graphs_2,{});
+
+
+
+
+    </script>
+
+</html>

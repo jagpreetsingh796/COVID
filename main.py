@@ -40,6 +40,7 @@ df_new=df_grouped.xs(df['ObservationDate'].max())
 data= df.groupby(["ObservationDate"])['Confirmed','Deaths', 'Recovered'].sum().reset_index()
 x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
+print(data.head())
 # print(x_data.head())
 # print(y_data.head())
 # poly=PolynomialFeatures(degree=9)
@@ -130,10 +131,32 @@ def first():
     data = [fig]
     graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
     schedule.every(1).minutes.do(get_data)
-
-
     return render_template('index.html',
                            graphJSON=graphJSON)
+
+@app.route('/scatter')
+def second():
+    # fig = go.Figure()
+    # fig.add_trace(go.Scatter(y=data['Confirmed'].values, x=data['ObservationDate'].values, name='Confirmed'))
+    # fig.add_trace(go.Scatter(y=data['Deaths'].values, x=data['ObservationDate'].values, name='Deaths'))
+    # fig.add_trace(go.Scatter(y=data['Recovered'].values, x=data['ObservationDate'].values, name='Recovered'))
+    fig=go.Scatter(y=data['Confirmed'], x=data['ObservationDate'])
+    d = [fig]
+    graphJSON_1 = json.dumps(d, cls=plotly.utils.PlotlyJSONEncoder)
+    fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
+    d1 = [fig]
+    graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
+    fig = go.Scatter(y=data['Recovered'], x=data['ObservationDate'])
+    d2 = [fig]
+    graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+
+
+
+    schedule.every(1).minutes.do(get_data)
+    return render_template('index_2.html',
+                           graphJSON=[graphJSON_1,graphJSON_2,graphJSON_3])
 
 @app.route('/predict',methods=['POST','GET'])
 def imp():

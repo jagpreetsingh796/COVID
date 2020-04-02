@@ -1,0 +1,304 @@
+<!doctype html>
+<html>
+  <head>
+      <head>
+<meta charset="UTF-8">
+<title>Google Material Design Tab Bar</title>
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@CodePen">
+<meta name="twitter:title" content="Google Material Design Tab Bar">
+<meta name="twitter:description" content="...">
+<meta name="twitter:image" content="https://screenshot.codepen.io/518965.pbEbQy.d473938b-0916-4d62-841a-b5180e5e980d.png">
+<meta property="og:image" content="https://codepen.io/Kapilnemo/pen/pbEbQy/image/large.png" itemprop="thumbnailUrl">
+<meta property="og:title" content="Google Material Design Tab Bar">
+<meta property="og:url" content="https://codepen.io/Kapilnemo/details/pbEbQy">
+<meta property="og:site_name" content="CodePen">
+<meta property="og:description" content="...">
+<link rel="alternate" type="application/json+oembed" href="https://codepen.io/api/oembed?url=https%3A%2F%2Fcodepen.io%2FKapilnemo%2Fpen%2FpbEbQy&amp;format=json" title="Google Material Design Tab Bar">
+<link href="https://fonts.googleapis.com/css?family=Lato:300,400,400italic,700,700italic,900,900italic" rel="stylesheet">
+<link rel="stylesheet" media="all" href="https://static.codepen.io/assets/global/global-ece013808aa2a30726750b6666a492cc98e70125e70ff3f5fdfe834f16cf4216.css">
+<link rel="stylesheet" media="screen" href="https://static.codepen.io/assets/packs/css/everypage-3cb6ab52.css">
+<link rel="stylesheet" media="all" href="https://static.codepen.io/assets/editor/editor-4b9455e47e680eb3ba4d576bce3169777f15a82bd0a30b719d5c5a229055432f.css">
+<meta name="description" content="...">
+<link rel="stylesheet" media="screen" href="https://static.codepen.io/assets/editor/themes/twilight-c4d2eafba805f08fdb40c0900ac100b78469aba0532ca487a4fb1591a9424a02.css" id="cm-theme">
+<style id="cm-font-family" class="cm-font-family">
+
+
+  .CodeMirror,
+  .console-logs .console-line,
+  .console-command-line-input,
+  .console-message,
+  .CodeMirror-hint {
+    font-family: Monaco, MonoSpace;
+  }
+</style>
+<style id="cm-font-size">
+  .CodeMirror,
+  .console-logs .console-line,
+  .console-command-line-input,
+  .console-message,
+  .CodeMirror-hint {
+    font-size: 14px;
+  }
+</style>
+<link rel="apple-touch-icon" type="image/png" href="https://static.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
+<meta name="apple-mobile-web-app-title" content="CodePen">
+<link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
+<link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111">
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="euvK1hH9PB41EeUluYoczaNqmT2SahyfUXsHTeixJGJrnHJo4yQfrti8f1VhyISmfT4If+B5cRgsSC9dJ6bmlg==">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script>/* Firefox needs this to prevent FOUC. */</script>
+</head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<!--    <script src="plotly-latest.min.js"></script>-->
+    <style type="text/css">
+    @import url(https://fonts.googleapis.com/css?family=Roboto:400,400italic,600,600italic,700,700italic);
+body {
+		font-family: 'Roboto';
+		background-color: #f9f9f9;
+}
+
+.container{
+	height:500px;
+	width:580px;
+	padding:0;
+	margin:10px;
+	border-radius:5px;
+	box-shadow: 0 2px 3px rgba(0,0,0,.3)
+
+}
+
+header {
+		position: relative;
+}
+
+.hide {
+		display: none;
+}
+
+.tab-content {
+		padding:25px;
+}
+
+#material-tabs {
+		position: relative;
+		display: block;
+	  padding:0;
+		border-bottom: 1px solid #e0e0e0;
+}
+
+#material-tabs>a {
+		position: relative;
+	 display:inline-block;
+		text-decoration: none;
+		padding: 22px;
+		text-transform: uppercase;
+		font-size: 14px;
+		font-weight: 600;
+		color: #424f5a;
+		text-align: center;
+		outline:;
+}
+
+#material-tabs>a.active {
+		font-weight: 700;
+		outline:none;
+}
+
+#material-tabs>a:not(.active):hover {
+		background-color: inherit;
+		color: #7c848a;
+}
+
+@media only screen and (max-width: 520px) {
+		.nav-tabs#material-tabs>li>a {
+				font-size: 11px;
+		}
+}
+
+.yellow-bar {
+		position: absolute;
+		z-index: 100;
+		bottom: 0;
+		height: 3px;
+		background: #458CFF;
+		display: block;
+		left: 0;
+		transition: left .2s ease;
+		-webkit-transition: left .2s ease;
+}
+
+#tab1-tab.active ~ span.yellow-bar {
+		left: 0;
+		width: 160px;
+}
+
+#tab2-tab.active ~ span.yellow-bar {
+		left:165px;
+		width: 82px;
+}
+
+#tab3-tab.active ~ span.yellow-bar {
+		left: 253px;
+		width: 135px;
+}
+
+#tab4-tab.active ~ span.yellow-bar {
+		left:392px;
+		width: 163px;
+}
+ @import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body {
+  height: 100%;
+  background: #FAFAFA;
+  overflow: hidden;
+  font-family: 'Roboto', sans-serif;
+
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.tab-bar {
+  margin: 30px auto;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  list-style-type: none;
+  -webkit-padding-start: 0;
+
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.tab {
+  width: 150px;
+  padding: 20px 0;
+  background: white;
+  color: #607D8B;
+  overflow: hidden;
+  text-align: center;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  cursor: pointer;
+  position: relative;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.indicator {
+  width: 150px;
+  height: 3px;
+  background: #2196F3;
+  position: absolute;
+  margin-top: 58px;
+  margin-left:0;
+
+  -webkit-transition: margin 0.5s ease;
+
+  transition: margin 0.5s ease;
+}
+
+.cercle {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+}
+
+.light .cercle {background: white}
+.dark .cercle {background: black}
+
+.anim {
+  opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  -webkit-animation: touch 1.2s ease-out;
+          animation: touch 1.2s ease-out;
+}
+
+@-webkit-keyframes touch {
+  100% {
+    width: 600px;
+    height: 600px;
+    border-radius: 600px;
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    margin: -300px;
+  }
+}
+
+@keyframes touch {
+  100% {
+    width: 600px;
+    height: 600px;
+    border-radius: 600px;
+    opacity: 0;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    margin: -300px;
+  }
+}
+        .
+    </style>
+  </head>
+  <body>
+
+
+<ul class="tab-bar">
+  <li data-num="1" class="tab wave dark"><a href="/">Chart 1</a></li>
+  <li data-num="2" class="tab wave dark"><a href="/scatter_1">Chart 2</a></li>
+  <li data-num="3" class="tab wave dark"><a href="/scatter_2">Chart 3</a></li>
+  <li data-num="4" class="tab wave dark"><a href="/scatter_3">Chart 4</a></li>
+  <li data-num="5" class="tab wave dark"><a href="/predict">Forecast</a></li>
+  <div class="indicator"></div>
+</ul>
+
+
+    <h2 style="
+    text-align: center;
+">
+            Plotly Chart Demo
+        </h2>
+    </div>
+<div class="container" style="width:1200px;">
+
+  {% block map_body %}
+  {% endblock %}
+  {% block confirmed_body %}
+  {% endblock %}
+
+  {% block recovered_body %}
+  {% endblock %}
+  {% block Deaths_body%}
+  {% endblock %}
+    {% block predict_body%}
+    {% endblock %}
+    {% block result_body%}
+    {% endblock %}
+    </div>
+  </body>
+{% block map_script %}
+{% endblock  %}
+{% block confirmed_script %}
+{% endblock  %}
+{% block recovered_script%}
+{% endblock %}
+{% block Deaths_script%}
+{% endblock %}
+
+
+
+
+</html>

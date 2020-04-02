@@ -1,9 +1,4 @@
-<!doctype html>
-<html>
-<head>
-
-</head>
-<body>
-<h1>NUmber of confirmed cases are {{prediction}}</h1>
-</body>
-</html>
+{% extends "base.html" %}
+{% block result_body%}
+<h1>Number of confirmed cases are expected to be{{prediction}}</h1>
+{% endblock %}

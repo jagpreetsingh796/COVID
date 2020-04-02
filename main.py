@@ -36,7 +36,9 @@ df = pd.read_csv(zf.open('covid_19_data.csv'))
 df['ObservationDate']=pd.to_datetime(df['ObservationDate'])
 df_grouped=df.groupby(['ObservationDate','Country/Region']).sum()
 
+
 df_new=df_grouped.xs(df['ObservationDate'].max())
+
 data= df.groupby(["ObservationDate"])['Confirmed','Deaths', 'Recovered'].sum().reset_index()
 x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
@@ -106,6 +108,7 @@ def get_data():
     print("Lets get this party started",lm.predict(poly.fit_transform([[trial+1]])))
     filename = "finalized_model.pickle"
     pickle.dump(lm, open(filename, "wb"))
+    print(data.tail())
 
     print("file updated")
 @app.route('/')
@@ -117,26 +120,30 @@ def first():
     #
     # ]
     fig = go.Choropleth(
-        locations=df_new.index.to_list(),  # Spatial coordinates
+        locations=df_new.index,  # Spatial coordinates
         z=df_new['Confirmed'],  # Data to be color-coded
         locationmode='country names',  # set of locations match entries in `locations`
         colorscale='Blues',
+        showlegend=False,
 
         text=df_new['Deaths'],
-        hovertext=df_new['Recovered'],
-        hovertemplate="<b>Confirmed<b>:%{z},Death:%{text},Recovered:%{hovertext}",
+        hovertext=df_new.index,
+        hovertemplate="<b>Confirmed<b>:%{z},Death:%{text},Country:%{hovertext}",
         colorbar_title='Confirmed<br>Cases',
 
 
-    )
 
-    data = [fig]
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+
+    )
+    d4 = [fig]
+    graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
+
+
     schedule.every(1).minutes.do(get_data)
     return render_template('index.html',
-                           graphJSON=graphJSON)
+                           graphJSON=graphJSON_1)
 
-@app.route('/scatter')
+@app.route('/scatter_1')
 def second():
     # fig = go.Figure()
     # fig.add_trace(go.Scatter(y=data['Confirmed'].values, x=data['ObservationDate'].values, name='Confirmed'))
@@ -145,20 +152,41 @@ def second():
     fig=go.Scatter(y=data['Confirmed'], x=data['ObservationDate'])
     d = [fig]
     graphJSON_1 = json.dumps(d, cls=plotly.utils.PlotlyJSONEncoder)
-    fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
-    d1 = [fig]
-    graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    fig = go.Scatter(y=data['Recovered'], x=data['ObservationDate'])
-    d2 = [fig]
-    graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-
-
-
+    # fig = go.Scatter(y=data['Recovered'], x=data['ObservationDate'])
+    # d2 = [fig]
+    # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
     schedule.every(1).minutes.do(get_data)
     return render_template('index_2.html',
-                           graphJSON=[graphJSON_1,graphJSON_2,graphJSON_3])
+                           graphJSON=graphJSON_1)
+
+@app.route('/scatter_2')
+def third():
+
+
+    fig = go.Scatter(y=data['Recovered'], x=data['ObservationDate'])
+    d1 = [fig]
+    graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+    schedule.every(1).minutes.do(get_data)
+    return render_template('index_3.html',
+                           graphJSON=graphJSON_2)
+@app.route('/scatter_3')
+def fourth():
+    fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
+    d1 = [fig]
+    graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
+    schedule.every(1).minutes.do(get_data)
+    return render_template('index_3.html',
+                           graphJSON=graphJSON_2)
+
+
+
+
+
+
 
 @app.route('/predict',methods=['POST','GET'])
 def imp():

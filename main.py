@@ -10,7 +10,7 @@ import time
 import schedule
 from apscheduler.scheduler import Scheduler
 import numpy as np
-import plotly.express as px
+
 import matplotlib.pyplot as plt
 import atexit
 from sklearn.model_selection import train_test_split
@@ -66,8 +66,6 @@ print(data.tail())
 # model=pickle.load(open("finalized_model.pickle","rb"))
 # poly_loaded=pickle.load(open("poly.pickle","rb"))
 print(len(data))
-print("THis is on branch Pankaj")
-print("This is also on branch Pankaj")
 
 
 
@@ -82,7 +80,7 @@ print("This is also on branch Pankaj")
 
 
 
-@cron.interval_schedule(minutes=1)
+@cron.interval_schedule(minutes=600)
 def get_data():
 
     os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
@@ -139,7 +137,7 @@ def first():
     graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(1).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index.html',
                            graphJSON=graphJSON_1)
 
@@ -157,7 +155,7 @@ def second():
     # d2 = [fig]
     # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(1).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_2.html',
                            graphJSON=graphJSON_1)
 
@@ -170,7 +168,7 @@ def third():
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(1).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_3.html',
                            graphJSON=graphJSON_2)
 @app.route('/scatter_3')
@@ -178,7 +176,7 @@ def fourth():
     fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    schedule.every(1).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 

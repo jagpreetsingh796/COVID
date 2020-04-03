@@ -310,11 +310,11 @@ max-width: 700px;
 
 <div class="tabmain">
 <ul class="tab-bar" >
-  <li data-num="1" class="tab wave dark"><a href="/">Chart 1</a></li>
-  <li data-num="2" class="tab wave dark"><a href="/scatter_1">Chart 2</a></li>
-  <li data-num="3" class="tab wave dark"><a href="/scatter_2">Chart 3</a></li>
-  <li data-num="4" class="tab wave dark"><a href="/scatter_3">Chart 4</a></li>
-  <li data-num="5" class="tab wave dark"><a href="/predict">Forecast</a></li>
+  <li data-num="1" class="tab wave dark"><a href="/">MAP</a></li>
+  <li data-num="2" class="tab wave dark"><a href="/scatter_1">CONFIRMED</a></li>
+    <li data-num="3" class="tab wave dark"><a href="/scatter_2">RECOVERED</a></li>
+  <li data-num="4" class="tab wave dark"><a href="/scatter_3">DEATHS</a></li>
+  <li data-num="5" class="tab wave dark"><a href="/predict">FORECAST</a></li>
   <div class="indicator"></div>
 
 </ul>
@@ -323,7 +323,14 @@ max-width: 700px;
 
     <h2 style="
     text-align: center;">
-            Plotly Chart Demo
+            {% block map_text %}
+    {% endblock %}
+         {% block confirmed_text %}
+    {% endblock %}
+        {% block recovered_text%}
+        {% endblock %}
+        {% block deaths_text%}
+        {% endblock %}
         </h2>
     </div>
 <div class="container" style="width:1200px;">

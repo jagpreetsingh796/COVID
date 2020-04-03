@@ -18,7 +18,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
 import pickle
-
+from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 
 app = Flask(__name__)
 cron = Scheduler(daemon=True)
@@ -42,7 +42,7 @@ df_new=df_grouped.xs(df['ObservationDate'].max())
 data= df.groupby(["ObservationDate"])['Confirmed','Deaths', 'Recovered'].sum().reset_index()
 x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
-print(data.head())
+print(data.tail())
 # print(x_data.head())
 # print(y_data.head())
 # poly=PolynomialFeatures(degree=9)
@@ -82,7 +82,7 @@ print("This is also on branch Pankaj")
 
 
 
-@cron.interval_schedule(minutes=10)
+@cron.interval_schedule(minutes=1)
 def get_data():
 
     os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
@@ -179,7 +179,7 @@ def fourth():
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
     schedule.every(1).minutes.do(get_data)
-    return render_template('index_3.html',
+    return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 
 

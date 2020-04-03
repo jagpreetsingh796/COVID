@@ -21,6 +21,30 @@
 <link rel="stylesheet" media="all" href="https://static.codepen.io/assets/editor/editor-4b9455e47e680eb3ba4d576bce3169777f15a82bd0a30b719d5c5a229055432f.css">
 <meta name="description" content="...">
 <link rel="stylesheet" media="screen" href="https://static.codepen.io/assets/editor/themes/twilight-c4d2eafba805f08fdb40c0900ac100b78469aba0532ca487a4fb1591a9424a02.css" id="cm-theme">
+          <style>
+           .countup {
+    text-align: center;
+margin: 55px;
+  }
+<!--  .countup .timeel {-->
+<!--    display: inline-block;-->
+<!--    padding: 10px;-->
+<!--    background: #151515;-->
+<!--    margin: 0;-->
+<!--    color: white;-->
+<!--    min-width: 2.6rem;-->
+<!--    margin-left: 13px;-->
+<!--    border-radius: 10px 0 0 10px;-->
+<!--  }-->
+<!--  .countup span[class*="timeRef"] {-->
+<!--    border-radius: 0 10px 10px 0;-->
+<!--    margin-left: 0;-->
+<!--    background: #e8c152;-->
+<!--    color: black;-->
+<!--  }-->
+
+
+       </style>
 <style id="cm-font-family" class="cm-font-family">
 
 
@@ -41,6 +65,7 @@
     font-size: 14px;
   }
 </style>
+
 <link rel="apple-touch-icon" type="image/png" href="https://static.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png">
 <meta name="apple-mobile-web-app-title" content="CodePen">
 <link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico">
@@ -56,18 +81,31 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <!--    <script src="plotly-latest.min.js"></script>-->
+      <style>
     <style type="text/css">
     @import url(https://fonts.googleapis.com/css?family=Roboto:400,400italic,600,600italic,700,700italic);
 body {
+    padding-left: 0px;
 		font-family: 'Roboto';
 		background-color: #f9f9f9;
 }
-
+@media (min-width: 831px) {
+    body {
+        position: relative;
+        height: auto;
+        min-height: 100vh
+    }
+    body:not(.sidebar-false) {
+        padding-left: 0px;
+    }
+    body.sidebar-collapsed {
+        padding-left: 10px
+    }
 .container{
 	height:500px;
 	width:580px;
 	padding:0;
-	margin:10px;
+
 	border-radius:5px;
 	box-shadow: 0 2px 3px rgba(0,0,0,.3)
 
@@ -200,6 +238,17 @@ body {
   user-select: none;
 }
 
+.tabmain{
+
+max-width: 700px;
+  margin: auto;
+
+  padding: 10px;
+
+}
+
+
+
 .indicator {
   width: 150px;
   height: 3px;
@@ -252,27 +301,34 @@ body {
 }
         .
     </style>
+
+<!--      {% block clock_css%}-->
+<!--      {% endblock %}-->
   </head>
   <body>
 
 
-<ul class="tab-bar">
+<div class="tabmain">
+<ul class="tab-bar" >
   <li data-num="1" class="tab wave dark"><a href="/">Chart 1</a></li>
   <li data-num="2" class="tab wave dark"><a href="/scatter_1">Chart 2</a></li>
   <li data-num="3" class="tab wave dark"><a href="/scatter_2">Chart 3</a></li>
   <li data-num="4" class="tab wave dark"><a href="/scatter_3">Chart 4</a></li>
   <li data-num="5" class="tab wave dark"><a href="/predict">Forecast</a></li>
   <div class="indicator"></div>
+
 </ul>
+</div>
 
 
     <h2 style="
-    text-align: center;
-">
+    text-align: center;">
             Plotly Chart Demo
         </h2>
     </div>
 <div class="container" style="width:1200px;">
+<!--    {% block clock_html %}-->
+<!--    {% endblock %}-->
 
   {% block map_body %}
   {% endblock %}
@@ -283,11 +339,49 @@ body {
   {% endblock %}
   {% block Deaths_body%}
   {% endblock %}
-    {% block predict_body%}
-    {% endblock %}
+
     {% block result_body%}
     {% endblock %}
+
+    {% block predict_body%}
+    {% endblock %}
+
     </div>
+
+  <script>
+      var waveBtn = (function () {
+  'use strict';
+  var btn = document.querySelectorAll('.wave'),
+      tab = document.querySelector('.tab-bar'),
+      indicator = document.querySelector('.indicator'),
+      indi = 0;
+  indicator.style.marginLeft = indi + 'px';
+  indicator.style.opacity = 0;
+
+  for(var i = 0; i < btn.length; i++) {
+    btn[i].onmousedown = function (e) {
+      var newRound = document.createElement('div'),x,y;
+
+      newRound.className = 'cercle';
+      this.appendChild(newRound);
+
+      x = e.pageX - this.offsetLeft;
+      y = e.pageY - this.offsetTop;
+
+     newRound.style.left = x + "px";
+     newRound.style.top = y + "px";
+      newRound.className += " anim";
+
+      indicator.style.marginLeft = indi + (this.dataset.num-1) * 150 + 'px';
+
+      setTimeout(function() {
+        newRound.remove();
+      }, 50);
+    };
+  }
+}());
+
+  </script>
   </body>
 {% block map_script %}
 {% endblock  %}
@@ -297,7 +391,9 @@ body {
 {% endblock %}
 {% block Deaths_script%}
 {% endblock %}
-
+<!--{% block clock_script%}-->
+<!--{% endblock %}-->
+<!---->
 
 
 

@@ -3,4 +3,41 @@
 <p style="
     text-align: center;
 ">Number of confirmed cases are expected to be<p style="text-align: center;color: blue;font-size: 40px;">{{prediction}}</p></p>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+
+
+}
+
+td, th {
+  border: 1px solid #dddddd;
+
+  padding: 8px;
+  text-align: center;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+<div align="centre">
+<table >
+<tr>
+    <th>Last Five Days</th>
+    <th>Actual Cases</th>
+</tr>
+{% for i,j in num_cases %}
+    <tr>
+    <th>{{ i[0] }}</th>
+    <th>{{ j[0] }}</th>
+    </tr>
+
+
+{% endfor %}
+</table>
+</div>
+
 {% endblock %}

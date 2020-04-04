@@ -41,6 +41,8 @@ df_new=df_grouped.xs(df['ObservationDate'].max())
 data= df.groupby(["ObservationDate"])['Confirmed','Deaths', 'Recovered'].sum().reset_index()
 x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
+print("Confirmed last 3 days",x_data.tail(3).values.tolist())
+print("Confirmed last 3 days",y_data.tail(3).values.tolist())
 print(data.tail())
 # print(x_data.head())
 # print(y_data.head())
@@ -151,13 +153,22 @@ def imp():
             poly_loaded = pickle.load(open("poly.pickle", "rb"))
             prediction = load_model.predict(poly_loaded.fit_transform([[day]]))
             print("Inside the html",prediction[0][0])
-            return render_template("result.html",prediction=round(prediction[0][0]))
+            num=x_data.tail(5).values.tolist()
+            cases=y_data.tail(5).values.tolist()
+            print("Inside predictor",num[0][0])
+
+
+            return render_template("result.html",prediction=round(prediction[0][0]),num_cases=zip(num,cases))
         except Exception as e:
             print('The Exception message is: ', e)
             return 'something is wrong'
 
 
     else:
+
+
+
+
         return render_template("forecast.html")
 
 

@@ -11,7 +11,6 @@ import schedule
 from apscheduler.scheduler import Scheduler
 import numpy as np
 
-import matplotlib.pyplot as plt
 import atexit
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -81,6 +80,8 @@ print(len(data))
 
 
 @cron.interval_schedule(minutes=300)
+
+
 def get_data():
     os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
     zf = zipfile.ZipFile('novel-corona-virus-2019-dataset.zip')
@@ -140,12 +141,30 @@ def get_data():
     print(data.tail())
 
     print("file updated")
+@app.route('/',methods=['POST','GET'])
+def imp():
+    if request.method =='POST':
+        try:
+            day=float(request.form['day'])
+            filename = "finalized_model.pickle"
+            load_model = pickle.load(open(filename, 'rb'))
+            poly_loaded = pickle.load(open("poly.pickle", "rb"))
+            prediction = load_model.predict(poly_loaded.fit_transform([[day]]))
+            print("Inside the html",prediction[0][0])
+            return render_template("result.html",prediction=round(prediction[0][0]))
+        except Exception as e:
+            print('The Exception message is: ', e)
+            return 'something is wrong'
+
+
+    else:
+        return render_template("forecast.html")
 
 
 
 
 
-@app.route('/')
+@app.route('/map')
 def first():
 
 
@@ -222,24 +241,7 @@ def fourth():
 
 
 
-@app.route('/predict',methods=['POST','GET'])
-def imp():
-    if request.method =='POST':
-        try:
-            day=float(request.form['day'])
-            filename = "finalized_model.pickle"
-            load_model = pickle.load(open(filename, 'rb'))
-            poly_loaded = pickle.load(open("poly.pickle", "rb"))
-            prediction = load_model.predict(poly_loaded.fit_transform([[day]]))
-            print("Inside the html",prediction[0][0])
-            return render_template("result.html",prediction=round(prediction[0][0]))
-        except Exception as e:
-            print('The Exception message is: ', e)
-            return 'something is wrong'
 
-
-    else:
-        return render_template("forecast.html")
 
 
 

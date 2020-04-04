@@ -18,7 +18,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
 import pickle
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+
 
 app = Flask(__name__)
 cron = Scheduler(daemon=True)
@@ -80,9 +80,8 @@ print(len(data))
 
 
 
-@cron.interval_schedule(minutes=600)
+@cron.interval_schedule(minutes=300)
 def get_data():
-
     os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
     zf = zipfile.ZipFile('novel-corona-virus-2019-dataset.zip')
     df_updated = pd.read_csv(zf.open('covid_19_data.csv'))
@@ -96,19 +95,56 @@ def get_data():
     data = df.groupby(["ObservationDate"])['Confirmed', 'Deaths', 'Recovered'].sum().reset_index()
     x_data = pd.DataFrame(data.index)
     y_data = pd.DataFrame(data.Confirmed)
-    poly = pickle.load(open("poly.pickle", "rb"))
-    lm = LinearRegression()
+    x_data = pd.DataFrame(data.index)
+    y_data = pd.DataFrame(data.Confirmed)
+    x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, random_state=10)
+    rmses = []
+    degrees = np.arange(1, 20)
+    min_rmse, min_deg = 1e10, 0
+
+    for deg in degrees:
+
+        poly_features = PolynomialFeatures(degree=deg, include_bias=False)
+        x_poly_train = poly_features.fit_transform(x_train)
+
+        poly_reg = LinearRegression()
+        poly_reg.fit(x_poly_train, y_train)
+
+        x_poly_test = poly_features.fit_transform(x_test)
+        poly_predict = poly_reg.predict(x_poly_test)
+        poly_mse = mean_squared_error(y_test, poly_predict)
+        poly_rmse = np.sqrt(poly_mse)
+        rmses.append(poly_rmse)
+
+        if min_rmse > poly_rmse:
+            min_rmse = poly_rmse
+            min_deg = deg
+
+    print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
+    poly = PolynomialFeatures(degree=min_deg)
     x_data = poly.fit_transform(x_data)
-
-
-    lm.fit(x_data, y_data)
-    trial=len(data)
-    print("Lets get this party started",lm.predict(poly.fit_transform([[trial+1]])))
+    poly_reg = LinearRegression()
+    poly_reg.fit(x_data, y_data)
+    poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
     filename = "finalized_model.pickle"
-    pickle.dump(lm, open(filename, "wb"))
+    filename_2 = "poly.pickle"
+    pickle.dump(poly, open(filename_2, "wb"))
+    pickle.dump(poly_reg, open(filename, "wb"))
+    model = pickle.load(open("finalized_model.pickle", "rb"))
+    poly_loaded = pickle.load(open("poly.pickle", "rb"))
+
+    trial = len(data)
+    print("Lets get this party started", model.predict(poly_loaded.fit_transform([[trial]])))
+    filename = "finalized_model.pickle"
+    # pickle.dump(lm, open(filename, "wb"))
     print(data.tail())
 
     print("file updated")
+
+
+
+
+
 @app.route('/')
 def first():
 
@@ -137,7 +173,7 @@ def first():
     graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(600).minutes.do(get_data)
+    schedule.every(300).minutes.do(get_data)
     return render_template('index.html',
                            graphJSON=graphJSON_1)
 
@@ -155,7 +191,7 @@ def second():
     # d2 = [fig]
     # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(600).minutes.do(get_data)
+    schedule.every(300).minutes.do(get_data)
     return render_template('index_2.html',
                            graphJSON=graphJSON_1)
 
@@ -168,7 +204,7 @@ def third():
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(600).minutes.do(get_data)
+    schedule.every(300).minutes.do(get_data)
     return render_template('index_3.html',
                            graphJSON=graphJSON_2)
 @app.route('/scatter_3')
@@ -176,7 +212,7 @@ def fourth():
     fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    schedule.every(600).minutes.do(get_data)
+    schedule.every(300).minutes.do(get_data)
     return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 

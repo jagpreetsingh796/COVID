@@ -41,32 +41,48 @@ df_new=df_grouped.xs(df['ObservationDate'].max())
 data= df.groupby(["ObservationDate"])['Confirmed','Deaths', 'Recovered'].sum().reset_index()
 x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
-print("Confirmed last 3 days",x_data.tail(3).values.tolist())
-print("Confirmed last 3 days",y_data.tail(3).values.tolist())
+x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, random_state=10)
+rmses = []
+degrees = np.arange(1, 20)
+min_rmse, min_deg = 1e10, 0
+for deg in degrees:
+
+    poly_features = PolynomialFeatures(degree=deg, include_bias=False)
+    x_poly_train = poly_features.fit_transform(x_train)
+
+    poly_reg = LinearRegression()
+    poly_reg.fit(x_poly_train, y_train)
+
+    x_poly_test = poly_features.fit_transform(x_test)
+    poly_predict = poly_reg.predict(x_poly_test)
+    poly_mse = mean_squared_error(y_test, poly_predict)
+    poly_rmse = np.sqrt(poly_mse)
+    rmses.append(poly_rmse)
+
+    if min_rmse > poly_rmse:
+        min_rmse = poly_rmse
+        min_deg = deg
+
+print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
+poly = PolynomialFeatures(degree=min_deg)
+x_data_train = poly.fit_transform(x_data)
+poly_reg = LinearRegression()
+poly_reg.fit(x_data_train, y_data)
+poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
+filename = "finalized_model.pickle"
+filename_2 = "poly.pickle"
+pickle.dump(poly, open(filename_2, "wb"))
+pickle.dump(poly_reg, open(filename, "wb"))
+model = pickle.load(open("finalized_model.pickle", "rb"))
+poly_loaded = pickle.load(open("poly.pickle", "rb"))
+
+trial = len(data)
+print("First time", model.predict(poly_loaded.fit_transform([[trial-1]])))
+
+# pickle.dump(lm, open(filename, "wb"))
 print(data.tail())
-# print(x_data.head())
-# print(y_data.head())
-# poly=PolynomialFeatures(degree=9)
-# x_train,x_test,y_train,y_test=train_test_split(x_data,y_data,test_size=0.33,random_state=10)
-# poly=PolynomialFeatures(degree=9)
-# x_data=poly.fit_transform(x_data)
-# lm=LinearRegression()
-# lm.fit(x_data,y_data)
-# lm.score(x_train,y_train)
-# predicted=lm.predict(poly.fit_transform(x_test))
-# error=np.sqrt(mean_squared_error(y_test,predicted))
-# print(error)
-# print(lm.score(poly.fit_transform(x_test),y_test))
-# print(lm.predict(poly.fit_transform([[68]])))
-# filename="finalized_model.pickle"
-# filename_2="poly.pickle"
-# pickle.dump(poly,open(filename_2,"wb"))
-# pickle.dump(lm,open(filename,"wb"))
-# model=pickle.load(open("finalized_model.pickle","rb"))
-# poly_loaded=pickle.load(open("poly.pickle","rb"))
-# model=pickle.load(open("finalized_model.pickle","rb"))
-# poly_loaded=pickle.load(open("poly.pickle","rb"))
-print(len(data))
+
+print("file updated")
 
 
 
@@ -81,7 +97,8 @@ print(len(data))
 
 
 
-@cron.interval_schedule(minutes=300)
+
+@cron.interval_schedule(minutes=100)
 
 
 def get_data():
@@ -98,8 +115,7 @@ def get_data():
     data = df.groupby(["ObservationDate"])['Confirmed', 'Deaths', 'Recovered'].sum().reset_index()
     x_data = pd.DataFrame(data.index)
     y_data = pd.DataFrame(data.Confirmed)
-    x_data = pd.DataFrame(data.index)
-    y_data = pd.DataFrame(data.Confirmed)
+
     x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, random_state=10)
     rmses = []
     degrees = np.arange(1, 20)
@@ -156,6 +172,7 @@ def imp():
             num=x_data.tail(5).values.tolist()
             cases=y_data.tail(5).values.tolist()
             print("Inside predictor",num[0][0])
+            schedule.every(100).minutes.do(get_data)
 
 
             return render_template("result.html",prediction=round(prediction[0][0]),num_cases=zip(num,cases))
@@ -166,9 +183,7 @@ def imp():
 
     else:
 
-
-
-
+        schedule.every(100).minutes.do(get_data)
         return render_template("forecast.html")
 
 
@@ -203,7 +218,7 @@ def first():
     graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(100).minutes.do(get_data)
     return render_template('index.html',
                            graphJSON=graphJSON_1)
 
@@ -221,7 +236,7 @@ def second():
     # d2 = [fig]
     # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(100).minutes.do(get_data)
     return render_template('index_2.html',
                            graphJSON=graphJSON_1)
 
@@ -234,7 +249,7 @@ def third():
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(100).minutes.do(get_data)
     return render_template('index_3.html',
                            graphJSON=graphJSON_2)
 @app.route('/scatter_3')
@@ -242,7 +257,7 @@ def fourth():
     fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(100).minutes.do(get_data)
     return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 

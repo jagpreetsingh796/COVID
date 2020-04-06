@@ -64,20 +64,13 @@ for deg in degrees:
         min_deg = deg
 
 print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
-poly = PolynomialFeatures(degree=min_deg)
-x_data_train = poly.fit_transform(x_data)
-poly_reg = LinearRegression()
-poly_reg.fit(x_data_train, y_data)
-poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
-filename = "finalized_model.pickle"
-filename_2 = "poly.pickle"
-pickle.dump(poly, open(filename_2, "wb"))
-pickle.dump(poly_reg, open(filename, "wb"))
+
 model = pickle.load(open("finalized_model.pickle", "rb"))
 poly_loaded = pickle.load(open("poly.pickle", "rb"))
 
 trial = len(data)
-print("First time", model.predict(poly_loaded.fit_transform([[trial-1]])))
+print(trial)
+print("First time", model.predict(poly_loaded.fit_transform([[trial]])))
 
 # pickle.dump(lm, open(filename, "wb"))
 print(data.tail())
@@ -98,7 +91,7 @@ print("file updated")
 
 
 
-@cron.interval_schedule(minutes=100)
+@cron.interval_schedule(minutes=600)
 
 
 def get_data():
@@ -153,6 +146,7 @@ def get_data():
     poly_loaded = pickle.load(open("poly.pickle", "rb"))
 
     trial = len(data)
+    print(trial)
     print("Lets get this party started", model.predict(poly_loaded.fit_transform([[trial]])))
     filename = "finalized_model.pickle"
     # pickle.dump(lm, open(filename, "wb"))
@@ -172,7 +166,7 @@ def imp():
             num=x_data.tail(5).values.tolist()
             cases=y_data.tail(5).values.tolist()
             print("Inside predictor",num[0][0])
-            schedule.every(100).minutes.do(get_data)
+            schedule.every(600).minutes.do(get_data)
 
 
             return render_template("result.html",prediction=round(prediction[0][0]),num_cases=zip(num,cases))
@@ -183,7 +177,7 @@ def imp():
 
     else:
 
-        schedule.every(100).minutes.do(get_data)
+        schedule.every(600).minutes.do(get_data)
         return render_template("forecast.html")
 
 
@@ -198,6 +192,7 @@ def first():
     #     go.Bar(x=df['Country/Region'],y=df['Confirmed'])
     #
     # ]
+    df_new['text']='<br>'+'Confirmed :' + df_new['Confirmed'].astype(str) + '<br>'+'Recovered :' + df_new['Recovered'].astype(str) + '<br>' +'Deaths :' + df_new['Deaths'].astype(str)
     fig = go.Choropleth(
         locations=df_new.index,  # Spatial coordinates
         z=df_new['Confirmed'],  # Data to be color-coded
@@ -205,9 +200,9 @@ def first():
         colorscale='Blues',
         showlegend=False,
 
-        text=df_new['Deaths'],
+        text=df_new['text'],
         hovertext=df_new.index,
-        hovertemplate="<b>Confirmed<b>:%{z},Death:%{text},Country:%{hovertext}",
+        hovertemplate="Country:%{hovertext},%{text}",
         colorbar_title='Confirmed<br>Cases',
 
 
@@ -218,7 +213,7 @@ def first():
     graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(100).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index.html',
                            graphJSON=graphJSON_1)
 
@@ -236,7 +231,7 @@ def second():
     # d2 = [fig]
     # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(100).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_2.html',
                            graphJSON=graphJSON_1)
 
@@ -249,7 +244,7 @@ def third():
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(100).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_3.html',
                            graphJSON=graphJSON_2)
 @app.route('/scatter_3')
@@ -257,7 +252,7 @@ def fourth():
     fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    schedule.every(100).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 

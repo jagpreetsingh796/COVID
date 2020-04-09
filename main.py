@@ -44,11 +44,11 @@ x_data=pd.DataFrame(data.index)
 y_data=pd.DataFrame(data.Confirmed)
 x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, random_state=10)
 rmses = []
-degrees = np.arange(1, 10)
+degrees = np.arange(1, 15)
 min_rmse, min_deg = 1e10, 0
 for deg in degrees:
 
-    poly_features = PolynomialFeatures(degree=8, include_bias=False)
+    poly_features = PolynomialFeatures(degree=deg,include_bias=False)
     x_poly_train = poly_features.fit_transform(x_train)
 
     poly_reg = LinearRegression()
@@ -65,13 +65,20 @@ for deg in degrees:
         min_deg = deg
 
 print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
-
-model = pickle.load(open("finalized_model.pickle", "rb"))
-poly_loaded = pickle.load(open("poly.pickle", "rb"))
-
+# poly = PolynomialFeatures(degree=min_deg)
+# x_data = poly.fit_transform(x_data)
+# poly_reg = LinearRegression()
+# poly_reg.fit(x_data, y_data)
+# poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
+# filename = "finalized_model.pickle"
+# filename_2 = "poly.pickle"
+# pickle.dump(poly, open(filename_2, "wb"))
+# pickle.dump(poly_reg, open(filename, "wb"))
 trial = len(data)
 print(trial)
-print("First time", model.predict(poly_loaded.fit_transform([[trial-1]])))
+model = pickle.load(open("finalized_model.pickle", "rb"))
+poly_loaded = pickle.load(open("poly.pickle", "rb"))
+print("First time lets see", model.predict(poly_loaded.fit_transform([[trial-1]])))
 
 # pickle.dump(lm, open(filename, "wb"))
 print(data.tail())
@@ -112,7 +119,7 @@ def get_data():
 
     x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.33, random_state=10)
     rmses = []
-    degrees = np.arange(1, 11)
+    degrees = np.arange(1, 15)
     min_rmse, min_deg = 1e10, 0
 
     for deg in degrees:
@@ -134,7 +141,7 @@ def get_data():
             min_deg = deg
 
     print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
-    poly = PolynomialFeatures(degree=8)
+    poly = PolynomialFeatures(degree=min_deg)
     x_data = poly.fit_transform(x_data)
     poly_reg = LinearRegression()
     poly_reg.fit(x_data, y_data)

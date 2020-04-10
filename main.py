@@ -11,11 +11,13 @@ import schedule
 from apscheduler.scheduler import Scheduler
 import numpy as np
 
+
 import atexit
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_squared_error
+from pymongo import MongoClient
 import pickle
 
 
@@ -32,6 +34,24 @@ os.environ['KAGGLE_KEY'] = "d4f77b92179bfa82065bccfaa9c1dc54"
 os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
 zf = zipfile.ZipFile('novel-corona-virus-2019-dataset.zip')
 df = pd.read_csv(zf.open('covid_19_data.csv'))
+client = MongoClient("mongodb+srv://m220-student:m220-mongodb-basics@mflix-sa05a.mongodb.net/DataProgrammingTestProject?retryWrites=true&w=majority")
+collection=client["DataProgrammingTestProject"]
+db = collection["NewCovidData2020"]
+db.drop()
+records_ = df.to_dict(orient = "records")
+result = db.insert_many(records_)
+x=db.count_documents({})
+print("number of records",x)
+headData = db.find()
+row_list = []
+for i in headData:
+    row_list.append(i)
+
+
+df=pd.DataFrame(row_list)
+
+df.drop("_id",axis=1,inplace=True)
+
 df['ObservationDate']=pd.to_datetime(df['ObservationDate'])
 df_grouped=df.groupby(['ObservationDate','Country/Region']).sum()
 
@@ -78,7 +98,7 @@ trial = len(data)
 print(trial)
 model = pickle.load(open("finalized_model.pickle", "rb"))
 poly_loaded = pickle.load(open("poly.pickle", "rb"))
-print("First time lets see", model.predict(poly_loaded.fit_transform([[trial-1]])))
+print("First time lets see", model.predict(poly_loaded.fit_transform([[trial]])))
 
 # pickle.dump(lm, open(filename, "wb"))
 print(data.tail())
@@ -99,13 +119,31 @@ print(data.tail())
 
 
 
-@cron.interval_schedule(minutes=300)
+@cron.interval_schedule(minutes=600)
 
 
 def get_data():
     os.system("kaggle datasets download -d sudalairajkumar/novel-corona-virus-2019-dataset")
     zf = zipfile.ZipFile('novel-corona-virus-2019-dataset.zip')
+
     df_updated = pd.read_csv(zf.open('covid_19_data.csv'))
+    client_new = MongoClient("mongodb+srv://m220-student:m220-mongodb-basics@mflix-sa05a.mongodb.net/DataProgrammingTestProject?retryWrites=true&w=majority")
+    collection_new = client_new["DataProgrammingTestProject"]
+    db_new = collection_new["NewCovidData2020"]
+    db_new.drop()
+    records_new_ = df_updated.to_dict(orient="records")
+    result_new = db.insert_many(records_new_)
+    x_new = db.count_documents({})
+    print("number of records", x_new)
+    headData_new = db.find()
+    row_list_new = []
+    for i in headData_new:
+        row_list_new.append(i)
+
+    df_updated= pd.DataFrame(row_list_new)
+
+    df_updated.drop("_id", axis=1, inplace=True)
+
     df.update(df_updated)
     df['ObservationDate'] = pd.to_datetime(df['ObservationDate'])
     df_grouped_updated = df.groupby(['ObservationDate', 'Country/Region']).sum()
@@ -155,7 +193,7 @@ def get_data():
 
     trial = len(data)
     print(trial)
-    print("Lets get this party started", model.predict(poly_loaded.fit_transform([[trial-1]])))
+    print("Lets get this party started with mongodb", model.predict(poly_loaded.fit_transform([[trial]])))
     filename = "finalized_model.pickle"
     # pickle.dump(lm, open(filename, "wb"))
     print(data.tail())
@@ -174,7 +212,7 @@ def imp():
             num=x_data.tail(5).values.tolist()
             cases=y_data.tail(5).values.tolist()
             print("Inside predictor",num[0][0])
-            schedule.every(300).minutes.do(get_data)
+            schedule.every(600).minutes.do(get_data)
 
 
             return render_template("result.html",prediction=round(prediction[0][0]),num_cases=zip(num,cases))
@@ -185,7 +223,7 @@ def imp():
 
     else:
 
-        schedule.every(300).minutes.do(get_data)
+        schedule.every(600).minutes.do(get_data)
         return render_template("forecast.html")
 
 
@@ -221,7 +259,7 @@ def first():
     graphJSON_1 = json.dumps(d4, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index.html',
                            graphJSON=graphJSON_1)
 
@@ -239,7 +277,7 @@ def second():
     # d2 = [fig]
     # graphJSON_3 = json.dumps(d2, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_2.html',
                            graphJSON=graphJSON_1)
 
@@ -251,7 +289,7 @@ def third():
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
 
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_3.html',
                            graphJSON=graphJSON_2)
 @app.route('/scatter_3')
@@ -259,7 +297,7 @@ def fourth():
     fig = go.Scatter(y=data['Deaths'], x=data['ObservationDate'])
     d1 = [fig]
     graphJSON_2 = json.dumps(d1, cls=plotly.utils.PlotlyJSONEncoder)
-    schedule.every(300).minutes.do(get_data)
+    schedule.every(600).minutes.do(get_data)
     return render_template('index_4.html',
                            graphJSON=graphJSON_2)
 

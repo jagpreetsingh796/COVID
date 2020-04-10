@@ -48,9 +48,9 @@ for i in headData:
     row_list.append(i)
 
 
-df=pd.DataFrame(row_list)
+df_database=pd.DataFrame(row_list)
 
-df.drop("_id",axis=1,inplace=True)
+# df.drop("_id",axis=1,inplace=True)
 
 df['ObservationDate']=pd.to_datetime(df['ObservationDate'])
 df_grouped=df.groupby(['ObservationDate','Country/Region']).sum()
@@ -140,9 +140,9 @@ def get_data():
     for i in headData_new:
         row_list_new.append(i)
 
-    df_updated= pd.DataFrame(row_list_new)
+    df_updated_database=pd.DataFrame(row_list_new)
 
-    df_updated.drop("_id", axis=1, inplace=True)
+    df_updated_database.drop("_id", axis=1, inplace=True)
 
     df.update(df_updated)
     df['ObservationDate'] = pd.to_datetime(df['ObservationDate'])

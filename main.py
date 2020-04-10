@@ -99,7 +99,7 @@ print(trial)
 model = pickle.load(open("finalized_model.pickle", "rb"))
 poly_loaded = pickle.load(open("poly.pickle", "rb"))
 print("First time lets see", model.predict(poly_loaded.fit_transform([[trial]])))
-
+print("lets see")
 # pickle.dump(lm, open(filename, "wb"))
 print(data.tail())
 

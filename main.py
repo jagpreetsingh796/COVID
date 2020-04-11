@@ -85,20 +85,20 @@ for deg in degrees:
         min_deg = deg
 
 print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
-# poly = PolynomialFeatures(degree=min_deg)
-# x_data = poly.fit_transform(x_data)
-# poly_reg = LinearRegression()
-# poly_reg.fit(x_data, y_data)
-# poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
-# filename = "finalized_model.pickle"
-# filename_2 = "poly.pickle"
-# pickle.dump(poly, open(filename_2, "wb"))
-# pickle.dump(poly_reg, open(filename, "wb"))
+poly = PolynomialFeatures(degree=min_deg)
+x_data = poly.fit_transform(x_data)
+poly_reg = LinearRegression()
+poly_reg.fit(x_data, y_data)
+poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
+filename = "finalized_model.pickle"
+filename_2 = "poly.pickle"
+pickle.dump(poly, open(filename_2, "wb"))
+pickle.dump(poly_reg, open(filename, "wb"))
 trial = len(data)
 print(trial)
 model = pickle.load(open("finalized_model.pickle", "rb"))
 poly_loaded = pickle.load(open("poly.pickle", "rb"))
-print("First time lets see", model.predict(poly_loaded.fit_transform([[trial]])))
+print("First time lets see", model.predict(poly_loaded.fit_transform([[trial-1]])))
 print("lets see")
 # pickle.dump(lm, open(filename, "wb"))
 print(data.tail())

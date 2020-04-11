@@ -86,9 +86,9 @@ for deg in degrees:
 
 print('Best degree {} with RMSE {}'.format(min_deg, min_rmse))
 poly = PolynomialFeatures(degree=min_deg)
-x_data = poly.fit_transform(x_data)
+x_transformed_data = poly.fit_transform(x_data)
 poly_reg = LinearRegression()
-poly_reg.fit(x_data, y_data)
+poly_reg.fit(x_transformed_data, y_data)
 poly_reg.predict((poly.fit_transform([[len(data) - 1]])))
 filename = "finalized_model.pickle"
 filename_2 = "poly.pickle"

@@ -8,6 +8,7 @@ import plotly
 import plotly.graph_objs as go
 import time
 import schedule
+
 from apscheduler.scheduler import Scheduler
 import numpy as np
 
